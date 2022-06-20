@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  postgres:
+    container_name: postgres_db
+    restart: always
+    image: postgres:alpine
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        read_only: false
+      - type: bind
+        source: ./scripts
+        target: /docker-entrypoint-initdb.d/
+        read_only: true
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_DB=blog_db
+      - POSTGRES_PASSWORD=1234
+    networks:
+      - postgres_network
+    user: postgres
+networks:
+  postgres_network:
+    name: postgres_network
+    external: false
+volumes:
+  postgres_data:
+    name: postgres_data
+    external: false
