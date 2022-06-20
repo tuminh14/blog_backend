@@ -1,0 +1,115 @@
+openapi: 3.0.0
+info:
+  title: Blog Backend API
+  description: Blog Backend API
+  version: 0.0.1-SNAPSHOT
+tags:
+  - name: Comment
+  - name: User
+  - name: Blog
+  - name: Authenticate
+  - name: Tag
+paths:
+  /register:
+    post:
+      tags:
+        - Authenticate
+      requestBody:
+        $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        200:
+          $ref: '#/components/schemas/GrantAuthentication'
+        default:
+          $ref: '#/components/schemas/GenericResponse'
+      security: [ ]
+  /login:
+    post:
+      tags:
+        - Authenticate
+      requestBody:
+        $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          $ref: '#/components/schemas/GrantAuthentication'
+        default:
+          $ref: '#/components/schemas/GenericResponse'
+      security: [ ]
+  /refresh_token:
+    post:
+      tags:
+        - Authenticate
+      requestBody:
+        $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        200:
+          $ref: '#/components/schemas/GrantAuthentication'
+        default:
+          $ref: '#/components/schemas/GenericResponse'
+  /logout:
+    post:
+      tags:
+        - Authenticate
+      responses:
+        200:
+          description: Logout successfully
+        default:
+          $ref: '#/components/schemas/GenericResponse'
+components:
+  schemas:
+    GenericResponse:
+      type: object
+      properties:
+        statusCode:
+          type: number
+        success:
+          type: boolean
+        payload:
+          type: object
+    GrantAuthentication:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    RefreshRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        email:
+          type: string
+          format: email
+      required:
+        - username
+        - password
+        - email
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      description: Authentication with bearer token (jwt)
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: [ ]
